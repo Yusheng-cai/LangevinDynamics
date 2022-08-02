@@ -47,9 +47,9 @@ class SingleParticleSimulation:
                 self.context_.setVelocitiesToTemperature(self.temperature_)
     
     def __call__(self, iterations:int, print_frequency=50, outputfileName="output.dat"):
-        #f = open(outputfileName, "w")
-        #f.write("# x\ty\tz\tPE\tKE\tTE\tforce")
-        for i in range(iterations):
+        f = open(outputfileName, "w")
+        f.write("# x(nm)\ty(nm)\tz(nm)\tPE(kJ/mol)\tKE(kJ/mol)\tTE(kJ/mol)\n")
+        for i in tqdm(range(iterations)):
             self.integrator_.step(1)
 
             # obtain the state object 
@@ -57,17 +57,14 @@ class SingleParticleSimulation:
 
             # obtain position
             position = state.getPositions(asNumpy=True).value_in_unit(unit.nanometer)
-            print("Position = ", position)
-            PE       = state.getPotentialEnergy()
-            force    = state.getForces()
-            print("Force from state = " , force)
-            print("Force from dw = ", self.Potential_.CalcForce(position))
-            KE       = state.getKineticEnergy()
+            PE       = state.getPotentialEnergy() / unit.kilojoule_per_mole
+            force    = state.getForces() 
+            KE       = state.getKineticEnergy() /unit.kilojoule_per_mole
             TE       = PE + KE
 
             # record in file
-            #if (i+1) % print_frequency == 0:
-            #    f.write("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(position[0], position[1], position[2], PE, KE, TE))
+            if (i+1) % print_frequency == 0:
+                f.write("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(position[0,0], position[0,1], position[0,2], PE, KE, TE))
                 
-        #f.close()
+        f.close()
 
