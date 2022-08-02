@@ -24,5 +24,6 @@ setup(name = "LangevinDynamics",
         author_email="cys9741@seas.upenn.edu", 
         python_requires=">=3.9", 
         install_requires=requirements, 
-        packages=find_packages())
+        packages=find_packages()
+)
 
