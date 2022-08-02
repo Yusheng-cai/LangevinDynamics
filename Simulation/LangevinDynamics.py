@@ -1,6 +1,5 @@
-from openmm.app import *
-import openmm.unit as unit
-import openmm
+from openmm import unit
+from openmm import openmm
 import numpy as np
 from tqdm import tqdm
 from Simulation.Potential import BasePotential
@@ -24,7 +23,7 @@ class SingleParticleSimulation:
                 self.timestep_   = timestep * unit.femtosecond
 
                 # Initialize integrator 
-                self.integrator_ = openmm.LangevinIntegrator(temperature, friction, timestep)
+                self.integrator_ = openmm.LangevinIntegrator(self.temperature_, self.friction_, self.timestep_)
 
                 # Initialize the initial coordinates 
                 self.coords_     = np.array([[0,0,0]])
@@ -61,7 +60,8 @@ class SingleParticleSimulation:
             print("Position = ", position)
             PE       = state.getPotentialEnergy()
             force    = state.getForces()
-            print("Force from dw = " , force)
+            print("Force from state = " , force)
+            print("Force from dw = ", self.Potential_.CalcForce(position))
             KE       = state.getKineticEnergy()
             TE       = PE + KE
 
